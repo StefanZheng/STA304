@@ -1,0 +1,115 @@
+---
+title: "Toronto Apartment Building Scores' Analysis"
+author: "Biwei  Zheng 1002775008"
+date: "27/09/2020"
+output: html_document
+---
+
+### Abstract
+
+This is a brife analysis on the apartment building scores' distribution in Toronto. It shows a approximate normal distribution with a left skewness. The scores are fairly concentrated in the IQR (Inter Quertile Range) with some outliers in the lower end, which means that most of the buildings received a good score range from 70-90, with some buildings received sub 50s. 
+
+### Introduction
+Toronto is Canada's largest city, with a population of 3 million people living in 630 km^2 of land. Like myself, most residents live in apartment buildings or high rise condos, rather than detached houses or townhouses. In this article, I'll analyze the apartment building scores' distribution, issued by Municipal Licensing & Standards in July 2020. 
+
+The apartment building score is the overall score of a building with a maximum of 100. There are 20 evaluation variables, each has a score range from 1 - 5 based on their conditions, and added up to consist the overall score of a building. The variables are: BALCONY_GUARDS, ELEVATORS, ENTRANCE_DOORS_WINDOWS, ENTRANCE_LOBBY, EXTERIOR_CLADDING, EXTERIOR_GROUNDS, EXTERIOR_WALKWAYS, GARBAGE_BIN_STORAGE_AREA, GARBAGE_CHUTE_ROOMS, GRAFFITI, INTERIOR_LIGHTING_LEVELS, INTERIOR_WALL_CEILING_FLOOR,  INTERNAL_GUARDS_HANDRAILS, LAUNDRY_ROOMS, OTHER_FACILITIES, PARKING_AREA, SECURITY, STAIRWELLS, STORAGE_AREAS_LOCKERS, WATER_PEN_EXT_BLDG_ELEMENTS. 
+
+
+
+### Histogram
+
+```{r setup, include=FALSE}
+# data setup
+data = read.csv("/Users/zhengbiwei/Desktop/Apartment Building Evaluation.csv", header = TRUE)
+attach(data)
+data
+library(dplyr)
+library(ggplot2)
+```
+
+```{r, echo=FALSE, warning=FALSE}
+# histogram
+score_histogram <- data %>%
+  ggplot(aes(x = SCORE)) + # Tell ggplot to use score on the x axis
+  theme_classic() + # Make the plot pretty
+  geom_histogram( # Makes a histogram
+    aes(y = ..density..),
+    bins = 20,
+    colour = "black",
+    fill = "lightgrey"
+  ) +
+  geom_density() +
+  labs(title = "Distribution of apartment evaluation score",
+       x = "Score",
+       y = "Density") +
+  scale_x_continuous(breaks = seq(30,100,by = 5))
+
+score_histogram
+```
+
+The above histogram of apartment score shows an approximat normal distribution of the scores, with a left skewness. The majority of score distribution are centered within 65 - 90 range. This is a good sign that most apartments have a 70+ score, which generally indicates a good living environment. However, the long tail on the left indicates that there are buildings with sub 60 scores and even as low as sub 40. 
+
+
+
+### Boxplot and Summary
+
+```{r, echo=FALSE}
+boxplot(SCORE, xlab="apartment", ylab="score", main="Boxplot of evaluation score")
+
+score_na = na.omit(SCORE)
+summary(score_na)
+sd(score_na)
+```
+
+
+The boxplot shows that the data is quiet concentrated in IQR and slightly left-skewed. The median of the apartments' evaluation score is 76, the mean is 75.92. The minimum score is 37 and the maximum score is 100. The IQR is between 70 and 82. The standard deviation calculated by R is 9.3. There are a number of outliers in the lower end, which indicates that there are some really low score apartment buildings exist.
+
+
+
+### Limitations
+One of the limitation is that the data merely shows the distribution, but cannot show scores based on geographic information, thus we cannot see how scores varies based on neighbourhoods. 
+
+### Appendix
+{r setup, include=FALSE}
+#data setup
+data = read.csv("/Users/zhengbiwei/Desktop/Apartment Building Evaluation.csv", header = TRUE)
+attach(data)
+data
+library(dplyr)
+library(ggplot2)
+
+{r, echo=FALSE, warning=FALSE}
+#histogram
+score_histogram <- data %>%
+  ggplot(aes(x = SCORE)) + # Tell ggplot to use score on the x axis
+  theme_classic() + # Make the plot pretty
+  geom_histogram( # Makes a histogram
+    aes(y = ..density..),
+    bins = 20,
+    colour = "black",
+    fill = "lightgrey"
+  ) +
+  geom_density() +
+  labs(title = "Distribution of apartment evaluation score",
+       x = "Score",
+       y = "Density") +
+  scale_x_continuous(breaks = seq(30,100,by = 5))
+
+score_histogram
+
+{r, echo=FALSE}
+boxplot(SCORE, xlab="apartment", ylab="score", main="Boxplot of evaluation score")
+
+score_na = na.omit(SCORE)
+summary(score_na)
+sd(score_na)
+
+
+### Reference
+1. Municipal Licensing & Standards, Oper Data Toronto: Apartment Building Evaluations
+https://open.toronto.ca/dataset/apartment-building-evaluation/
+
+2. Toronto at a glance, City of Toronto 
+https://www.toronto.ca/city-government/data-research-maps/toronto-at-a-glance/
+
+
